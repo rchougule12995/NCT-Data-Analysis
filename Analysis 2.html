@@ -1,0 +1,132 @@
+<html>
+   <head>
+      <title>National Car Testing Analysis</title>
+    <script src="https://cdn.jsdelivr.net/npm/vega@5.9.0"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vega-lite@4.0.2"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vega-embed@6.2.1"></script>
+      <style>
+         body {
+         font-family: sans-serif;
+         }
+      </style>
+   </head>
+   <body>
+      <table style="width: 850px;" cellspacing="5" cellpadding="5">
+         <tbody>
+            <tr>
+               <td style="vertical-align: top;"><strong>Dataset description:</strong></td>
+               <td style="vertical-align: top;"><p><a href="https://data.gov.ie/dataset/2016-make-model-year-failures-at-nct" target="_blank" rel="noopener">National Car Testing Data</a>.</p>
+			   <p>The dataset contains various attrributes like Vehicle Make, Model, their year of birth, number of vehicles manufactured in total and the various components in which the had undergone tests. 
+			   In addition to that each of the quantitative attribute has a number/count along with its percentage associated. Example: PASS, PASS%. Pass denotes the total number of that vehicle model passed the overall National Car Testing. 
+			   Whereas for all other components, it gives the number of vehicles failed in that test and percentage of failure. </p>
+               </td>
+            </tr>
+            <tr>
+               <td style="vertical-align: top;"><strong>Initial questions</strong></td>
+               <td style="vertical-align: top;">How does the Pass percentage of vehicles vary for the top 10 vehicle manufacturers in 2016?</td>
+            </tr>
+         </tbody>
+      </table>
+      <hr />
+      <div id="vis"></div>
+      <hr />
+      <table style="width: 850px;" cellspacing="5" cellpadding="5">
+         <tbody>
+            <tr>
+               <td style="width: 200px; vertical-align: top;"><strong>Description:&nbsp;</strong></td>
+               <td style="vertical-align: top;">
+			   <p>
+				The box plot shows the variation in the pass percentage National Car Testing of the vehicles manufactured by top vehicle producers in the year 2016.
+				Hovering over will give detailed summary on the pass percentage of National Car Testing, showing the first quartile, third quartile, minimum percentage and the maximum percentage.
+				The black tick inside the box denotes the median for the pass percentage for that manufacturer
+
+			   </p>
+			   </td>
+            </tr>
+            <tr>
+               <td style="vertical-align: top;"><strong>Insight:</strong></td>
+               <td style="vertical-align: top;">
+			   <p>
+				Among all the top vehicle manufactures, vehicles manufactured by MERCEDES BENZ could be concluded as safest. If we look at the box plot the lower quartile of MERCEDES BENZ vehicles was highest, as well as the average seems to be the highest.
+				We can conlcude so because, the median, and Interquartile range of the National Car Testing passing percentage seems to be the best for MERCEDES BENZ.
+				Second best in terms of the pass percentage is the BMW.
+
+			   </p>
+			   </td>
+            </tr>
+            <tr>
+               <td style="vertical-align: top;"><strong>Design considerations</strong></td>
+               <td style="vertical-align: top;">
+			   <p>
+				I have used a box plot in this visualisation as it gives a clear indication on the distribution of the passing percentage. We can find the range where most of the data lies.
+				Median can help us find that. Combination of median and interquartile ranges help to understand the best among various categories.
+				The color that I chose for the box plot is green, as green can be perceived as safe. Another reason being visual aspect, the black color for the median tick would be distinctly identified on the green box plot.
+
+			   </p>
+			   </td>
+            </tr>
+            <tr>
+               <td style="width: 200px; vertical-align: top;"><strong>Data filtering and transformation:&nbsp;</strong></td>
+               <td style="vertical-align: top;">
+			   <p>
+				The Data that I used in the first visualisation for comparing the vehicle manufacturing across their year of birth after the year 1990.
+				More importantly, the vehicle manufacturers that I have filtered to use include only those which we identified as the top vehicle manufacturers in the year 2016.
+				We will focus on the data for the top 10 manufacturers itself for the further analysis as well.
+			   </p>
+			   </td>
+            </tr>
+         </tbody>
+      </table>
+      <script type="text/javascript">
+        var yourVlSpec =  {
+  "data": {
+    "url": "https://raw.githubusercontent.com/rchougule12995/Vegalite/master/MakeModelData2016.csv"
+  },
+  "transform": [
+    {"filter": {"field": "YearOfBirth", "gt": 1990}},
+    {
+      "filter": {
+        "field": "VehicleMake",
+        "oneOf": [
+          "TOYOTA",
+          "VOLKSWAGEN",
+          "FORD",
+          "NISSAN",
+          "AUDI",
+          "BMW",
+          "OPEL",
+          "MERCEDES BENZ",
+          "PEUGEOT",
+          "RENAULT"
+        ]
+      }
+    }
+  ],
+  "mark": {"type": "boxplot", "extent": 1.5, "median": {"color": "black"},
+    "ticks": true},
+  "width": 700,
+  "height": 400,
+  "encoding": {
+    "x": {
+      "field": "VehicleMake",
+      "type": "nominal",
+      "axis": {
+        "title": "Vehicles Manufacturer",
+        "titleFontSize": 12,
+        "labelAngle": 0, 
+      }
+    },
+    "y": {
+      "field": "PASS %",
+      "type": "quantitative",
+      "axis": {"title": "Pass Percentage", "titleFontSize": 12}}, 
+    "size": {"value": 25}, "color": {"value": "#67ff00"}
+  },
+      "title": {"text": ["Pass Percentage distribution for top manufacturers"], "fontSize": 16},
+      "description": ""
+} 
+
+            vegaEmbed("#vis", yourVlSpec);
+      </script>
+   </body>
+</html>

@@ -1,0 +1,198 @@
+<html>
+   <head>
+      <title>National Car Testing Analysis</title>
+    <script src="https://cdn.jsdelivr.net/npm/vega@5.9.0"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vega-lite@4.0.2"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vega-embed@6.2.1"></script>
+      <style>
+         body {
+         font-family: sans-serif;
+         }
+      </style>
+   </head>
+   <body>
+      <table style="width: 850px;" cellspacing="5" cellpadding="5">
+         <tbody>
+            <tr>
+               <td style="vertical-align: top;"><strong>Dataset description:</strong></td>
+               <td style="vertical-align: top;"> 
+			   <p><a href="https://data.gov.ie/dataset/2016-make-model-year-failures-at-nct" target="_blank" rel="noopener">National Car Testing Data</a>.</p>
+			   <p>The dataset contains various attrributes like Vehicle Make, Model, their year of birth, number of vehicles manufactured in total and the various components in which the had undergone tests. 
+			   In addition to that each of the quantitative attribute has a number/count along with its percentage associated. Example: PASS, PASS%. Pass denotes the total number of that vehicle model passed the overall National Car Testing. 
+			   Whereas for all other components, it gives the number of vehicles failed in that test and percentage of failure. </p>
+               </td>
+            </tr>
+            <tr>
+               <td style="vertical-align: top;"><strong>Initial questions</strong></td>
+               <td style="vertical-align: top;">What are the total number of Vehicles manufactured during the year 2016 by their year of birth being 1990 or later?
+Which vehicle manufacturers are top producers overall?</td>
+            </tr>
+         </tbody>
+      </table>
+      <hr />
+      <div id="vis"></div>
+      <hr />
+      <table style="width: 850px;" cellspacing="5" cellpadding="5">
+         <tbody>
+            <tr>
+               <td style="width: 200px; vertical-align: top;"><strong>Description:&nbsp;</strong></td>
+               <td style="vertical-align: top;">
+			   <p>The bar charts show the number of vehicles manufactured in the year 2016 categorized by their year of birth.</p>
+			   <p>The second bar chart compares the total number of vehicles manufactured by the top 10 vehicle manufacturers and the total vehicles produced by other manufacturers.
+				Hovering over the chart gives the exact number of vehicles produced.</p>
+			   </td>
+            </tr>
+            <tr>
+               <td style="vertical-align: top;"><strong>Insight:</strong></td>
+               <td style="vertical-align: top;">
+			   <p>
+				Amongst all the vehicles manufactured in the year 2016, the maximum number of vehicles that were produced were born between 2005-2010.
+				It suggests that those vehicles manufactured by the Vehcile manufacturers have had a good feedback from the vehicle owners as well as their sale might have been good, hence large production of those vehicles.
+				The least produced vehicles are those which were launched during the year 1990-1995.
+				All the data used in the visualisation has been considered for the vehicles that were launched in or after 1990, to get a general idea about the vehicle manufacturing considering the model age between last 25 years.
+				</p>
+				<p>
+				From the second visualisation, we get details on what are the number of vehicles produced by the top 10 vehicle manufacturers vs all the rest manufacturers.
+				It gives an ascending order of the number of vehicles manufactured by the top 10 vehicle manufacturers. The last bar in the chart shows the sum of vehicles manufactured by the rest of the vehicle manufacturers.
+				Amongst, the top 10 vehicle producers, Toyota was the highest producer of vehicles, whereas Mercedes Benz ranked 10th in total production of vehicles.
+			   </p>
+			   </td>
+            </tr>
+            <tr>
+               <td style="vertical-align: top;"><strong>Design considerations</strong></td>
+               <td style="vertical-align: top;">
+			   <p>
+				I have used bar chart in both the visualisations as the data has categorical as well as quantitative data. It can effectively give comparison of multiple categories.
+				While the bar chart gives sufficient information when comparing the vehicles produced in both the charts, hovering over a particular bar gives the exact number.
+				Though, the visualisation lacks in usage of color encoding, however, using the vehicle make for color encoding could have left it with a lot of color categories.
+				Same is applicable with the second visualisation. Hence, I found using a color encoding in this visualisation would not be that effective.
+				The category axis on the first visualisation is not sorted because it has time data which was transformed to ordinal data, where as the second bar chart has a nominal data where in the sequencing would not matter.
+
+			   </p>
+			   </td>
+            </tr>
+            <tr>
+               <td style="width: 200px; vertical-align: top;"><strong>Data filtering and transformation:&nbsp;</strong></td>
+               <td style="vertical-align: top;">
+			   <p>
+				The Data that I used in the first visualisation for comparing the vehicle manufacturing across their year of birth includes the years 1990 to 2015.
+				As the vehicles having the year of birth earlier than 1990 were very less comparitvely and was not much significant in the analysis.
+				Same with the vehicles have the year of birth 2016, the number of vehicles manufactured were significantly less than other categories.
+
+			   </p>
+			   </td>
+            </tr>
+         </tbody>
+      </table>
+      <script type="text/javascript">
+        var yourVlSpec =  {
+  "$schema": "https://vega.github.io/schema/vega-lite/v4.json",
+  "data": {"url": "https://raw.githubusercontent.com/rchougule12995/Vegalite/master/MakeModelData2016.csv",
+    "format": {"type": "csv"}
+  },
+  "transform": [
+    {
+      "filter": {
+        "field": "YearOfBirth",
+        "gt": 1990
+      }
+    }
+  ],
+"vconcat": [
+  {
+    "data": {"url": "https://raw.githubusercontent.com/rchougule12995/Vegalite/master/MakeModelData2016.csv",
+    "format": {"type": "csv"}
+  },
+  "transform": [
+    {
+      "filter": {
+        "field": "YearOfBirth",
+        "gt": 1990
+      }
+    }, {
+      "filter": {
+        "field": "YearOfBirth",
+        "lte": 2015
+      }
+    }
+  ],
+  "width": 700,
+  "height":400,
+  "mark": {"type": "bar"},
+      "encoding": {
+        "x": {"field": "YearOfBirth",
+          "type": "ordinal", "bin": true,
+          "axis": {"title": "Year of Manufacture", "titleFontSize": 12, "labelAngle": 0,"format": "", "labelOverlap": false}
+        },
+        "y": {
+          "field": "Total",
+          "type": "quantitative",
+          "aggregate":"sum",
+          "axis": {"title": "Number of Vehicles Manufactured", "titleFontSize": 12, "labelAngle": 0,
+        "labelOverlap": false}
+        }, "color": {"value": "#8f936c"},
+        "tooltip": [
+          {"field": "Total", "aggregate": "sum", "type": "quantitative", "title": "Total Vehicles"}
+        ]
+      },
+      "title": {"text": ["Total Number of Vehicles manufactured by Year of Birth"], "fontSize": 16},
+      "description": ""},
+  {
+"data": {"url": "https://raw.githubusercontent.com/rchougule12995/Vegalite/master/MakeModelData2016.csv",
+    "format": {"type": "csv"}
+  },
+  "transform": [
+    {
+      "filter": {
+        "field": "YearOfBirth",
+        "gt": 1990
+      }
+    },
+    {
+      "aggregate": [{"op": "sum", "field": "Total", "as": "Total"}],
+      "groupby": ["VehicleMake"]
+    },
+    {
+      "window": [{
+        "op":"row_number",
+        "as": "rank"
+      }],
+      "sort": [{ "field": "Total",  "order": "descending" }]
+    },
+    {
+    "calculate": "datum.rank <=10 ? datum.VehicleMake :'All Others' ", "as" : "Total_Vehicles"
+    }
+  ],
+  "width": 700,
+  "height":400,
+  "mark": {"type": "bar"},
+      "encoding": {
+        "y": {"field": "Total_Vehicles",
+            "type": "nominal",
+          "sort": {
+            "field":"Total",
+            "op":"sum",
+            "order": "ascending"
+          },
+          "axis": {"title": "Vehicle Manufacturer", "titleFontSize": 12, "labelOverlap": false}
+        },
+        "x": {
+          "field": "Total",
+          "aggregate":"sum",
+          "type": "quantitative",
+          "axis": {"title": "Number of Vehicles Manufactured", "titleFontSize": 12, "labelAngle": 0,
+        "labelOverlap": false, "tickMinStep": 50000}
+        },
+        "tooltip": [
+          {"field": "Total", "aggregate": "sum", "type": "quantitative", "title": "Total Vehicles"}
+        ]
+      },
+      "title": {"text": ["Top 10 Vehicle manufacturers for Vehicle Models vs All Others launched after 1990"], "fontSize": 16},
+      "description": ""}
+],
+  "config": {}
+}
+            vegaEmbed("#vis", yourVlSpec);
+      </script>
+   </body>
+</html>

@@ -1,0 +1,173 @@
+<html>
+   <head>
+      <title>National Car Testing Analysis</title>
+    <script src="https://cdn.jsdelivr.net/npm/vega@5.9.0"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vega-lite@4.0.2"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vega-embed@6.2.1"></script>
+      <style>
+         body {
+         font-family: sans-serif;
+         }
+      </style>
+   </head>
+   <body>
+      <table style="width: 850px;" cellspacing="5" cellpadding="5">
+         <tbody>
+            <tr>
+               <td style="vertical-align: top;"><strong>Dataset description:</strong></td>
+               <td style="vertical-align: top;"><p><a href="https://data.gov.ie/dataset/2016-make-model-year-failures-at-nct" target="_blank" rel="noopener">National Car Testing Data</a>.</p>
+			   <p>The dataset contains various attrributes like Vehicle Make, Model, their year of birth, number of vehicles manufactured in total and the various components in which the had undergone tests. 
+			   In addition to that each of the quantitative attribute has a number/count along with its percentage associated. Example: PASS, PASS%. Pass denotes the total number of that vehicle model passed the overall National Car Testing. 
+			   Whereas for all other components, it gives the number of vehicles failed in that test and percentage of failure. </p>
+               </td>
+            </tr>
+            <tr>
+               <td style="vertical-align: top;"><strong>Initial questions</strong></td>
+               <td style="vertical-align: top;">
+			   <p>
+			   How does the failure percentage of various components for the top 10 vehicle manufacturers over their year of birth?
+			   </p>
+			   </td>
+            </tr>
+			<tr>
+               <td style="vertical-align: top;">Select Failure Component:</td>
+			   <td style="vertical-align: top;">Default Selection- Engine, Noise and Exhaust</td>
+            </tr>
+			</tbody>
+      </table>
+		<label for="component">Choose the failure component to plot for comparison:</label>
+
+		<select id="component" onchange="selectGraph()" onload="selectGraph()">
+		<option value="Vehicle and Safety Equipment %">Vehicle and Safety Equipment</option>
+		<option value="Lighting and Electrical %">Lighting and Electrical</option>
+		<option value="Chassis and Body %">Chassis and Body</option>
+		<option value="Engine, Noise and Exhaust %" selected>Engine, Noise and Exhaust</option>
+		<option value="Steering and Suspension %">Steering and Suspension</option>
+		<option value="Braking Equipment %">Braking Equipment</option>
+		<option value="Wheels and Tyres %">Wheels and Tyres</option>
+		<option value="Side Slip Test %">Side Slip Test</option>
+		<option value="Suspension Test %">Suspension Test</option>
+		<option value="Light test %">Light Test</option>
+		<option value="Brake Test %">Brake Test</option>
+		<option value="Emmissions %">Emmissions</option>
+		<option value="OTHER %">OTHER</option>
+		<option value="Incompletable %">Incompletable</option>
+		</select>
+      <hr />
+      <div id="vis"></div>
+      <hr />
+      <table style="width: 850px;" cellspacing="5" cellpadding="5">
+         <tbody>
+            <tr>
+               <td style="width: 200px; vertical-align: top;"><strong>Description:&nbsp;</strong></td>
+               <td style="vertical-align: top;">
+			   <p>
+				This line chart shows the average failure percentage for each component for vehicles manufactured in the year 2016 by the top 10 vehicle manufacturers and their year of birth is after 1990.
+				The line chart gives a general idea about the trend that is seen with the failure percentage relative to its year of birth.
+				Hovering over the line will give exact average and the year of birth of the vehicle make, as its a bit difficult to interpret the exact numbers from viewing the visualisation at once.
+			   </p>
+			   </td>
+            </tr>
+            <tr>
+               <td style="vertical-align: top;"><strong>Insight:</strong></td>
+               <td style="vertical-align: top;">
+			   <p>
+				The visualisation gives a trend of how the average failure percentage of vehicles vary over different components during the testing of vehicles depending on the year of birth of the vehicle model.
+				In general, we can observe, there are quite a few components like- Engine, Noise and Exhaust, Braking Equipments, Side Slip Tests, Emission Tests from a the large list of components show a significant drop over their year of birth.
+				This trend could be due to the technology improvement in subsequent years, as new technologies were introduced in past decade or so there have been massive decrease in vehicle failure in specifically vehicle emissions & safety components like brakes, side slip test.
+				Also, from comparing each of the failure components from the drop-down, its observed that failure due to Vehicle Safety equipments does not follow much similar trend.
+			   </p>
+			   </td>
+            </tr>
+            <tr>
+               <td style="vertical-align: top;"><strong>Design considerations</strong></td>
+               <td style="vertical-align: top;">
+				<p>
+				I have used a Line chart in this visualisation as it is easier to understand a trend of various years by a line chart in a better way. The different facets in the graph give information on the Vehicle manufacturer/make.
+				I have also added a drop down to change the different failure component attributes. The default that is set is the Engine, Noise and exhaust failure.
+				The drop down has all the failure component attributes in percentage, on selection of the component from the dropdown the visualisation is plotted accordingly.
+				</p>
+			   </td>
+            </tr>
+            <tr>
+               <td style="width: 200px; vertical-align: top;"><strong>Data filtering and transformation:&nbsp;</strong></td>
+               <td style="vertical-align: top;">
+			   <p>
+				The Data that I used in the first visualisation for comparing the vehicle manufacturing across their year of birth after the year 1990.
+				More importantly, the vehicle manufacturers that I have filtered to use include only those which we identified as the top vehicle manufacturers in the year 2016.
+				We have focused on the data for the top 10 manufacturers itself in the earlier analysis and will use the same in this as well.
+
+			   </p>
+			   </td>
+            </tr>
+         </tbody>
+      </table>
+
+      <script type="text/javascript">
+	  
+		window.addEventListener("load",function(){
+			selectGraph();
+	},false);
+		
+	function selectGraph(){
+		var selectComponent = document.getElementById("component");
+		var FailureComponent = selectComponent.options[selectComponent.selectedIndex].value;
+
+        var yourVlSpec =  {
+  "$schema": "https://vega.github.io/schema/vega-lite/v4.json",
+  "title": FailureComponent +" failure of Top Vehicle Manufacturers",
+  "data": {
+    "url": "https://raw.githubusercontent.com/rchougule12995/Vegalite/master/MakeModelData2016.csv"
+  },
+  "transform": [
+    {"filter": {"field": "YearOfBirth", "timeUnit":"year", "gte": 1990}},
+    {
+      "filter": {
+        "field": "VehicleMake",
+        "oneOf": [
+          "TOYOTA", 
+          "VOLKSWAGEN",
+          "FORD",
+          "NISSAN",
+          "AUDI",
+          "BMW",
+          "OPEL",
+          "MERCEDES BENZ",
+          "PEUGEOT",
+          "RENAULT"
+        ]
+      }
+    }
+  ],
+  "mark": "line",
+  "encoding": {
+    "facet": {
+      "field": "VehicleMake",
+      "type": "ordinal",
+      "columns": 5, "header": {"title":"Vehicle Manufacturer", "fontSize": 14}
+    },
+    "x": {
+      "field": "YearOfBirth",
+      "type": "temporal",
+      "axis": {
+        "title": "Year of Birth",
+        "titleFontSize": 12,
+        "labelAngle": 0
+      }
+    },
+    "y": {
+      "field": FailureComponent,
+      "type": "quantitative", "aggregate":"average",
+      "axis": {"title": "Failure Percentage", "titleFontSize": 12}
+    }, "tooltip": [{"field": FailureComponent, "type": "quantitative", "aggregate":"average"},
+    {"field": "YearOfBirth", "type": "temporal", "format": "%Y"}],
+    "color": {"field": "VehicleMake", "type": "nominal", "title":"Vehicle Manufacturer", "titleFontSize": 12},
+  },
+      "title": {"text": [FailureComponent+" failure for top manufacturers"], "fontSize": 16},
+      "description": ""
+}
+            vegaEmbed("#vis", yourVlSpec);
+		}
+      </script>
+   </body>
+</html>
